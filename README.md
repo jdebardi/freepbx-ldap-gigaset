@@ -6,7 +6,7 @@ This work is based on a1commss freepbx-ldap, vjeantet's goldap as well as vjeant
 
 
 ## How it works
-It starts the LDAP service on port 10389 and responds to directory search requests by translating them into a SQL query against a union of the "asterisk.users" and "asterisk.ringgroups" tables in MySQL/MariaDB.
+It starts the LDAP service on port 10389 and responds to directory search requests by translating them into a SQL query against a union of the "asterisk.users", "asterisk.meetme" and "asterisk.ringgroups" tables in MySQL/MariaDB.
 
 Since we aren't working with sensitive information or trying to implement authentication, but most phones require a bind request with a username & password before they'll search, it'll respond as success to any bind request without checking credentials.
 
