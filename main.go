@@ -80,7 +80,7 @@ func handleSearchDSEint(w ldap.ResponseWriter, m *ldap.Message) {
 	log.Printf("Request TimeLimit=%d", r.TimeLimit().Int())
 	log.Printf("Request SizeLimit=%d", r.SizeLimit().Int())
 
-	sql := "SELECT name, extension FROM users"
+	sql := "SELECT * FROM (SELECT name, extension FROM users UNION SELECT description,grpnum FROM ringgroups) res"
 	sqlVals := []interface{}{}
 
 	swapField := func(v string) string {
