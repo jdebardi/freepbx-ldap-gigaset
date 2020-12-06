@@ -80,7 +80,7 @@ func handleSearchDSEint(w ldap.ResponseWriter, m *ldap.Message) {
 	log.Printf("Request TimeLimit=%d", r.TimeLimit().Int())
 	log.Printf("Request SizeLimit=%d", r.SizeLimit().Int())
 
-	sql := "SELECT * FROM (SELECT name, extension FROM users UNION SELECT description,grpnum FROM ringgroups UNION SELECT description,exten FROM meetme) res"
+	sql := "SELECT * FROM	( SELECT displayname name, CASE WHEN default_extension = 'none' AND home = '' THEN cell WHEN default_extension = 'none' THEN home ELSE default_extension END extension, CASE WHEN cell = '' THEN 'none' ELSE cell END cell, CASE WHEN home = '' THEN 'none' ELSE home END home, CASE WHEN company = '' THEN 'none' ELSE company END company FROM userman_users UNION SELECT description, grpnum, 'none', 'none', 'none' FROM ringgroups UNION SELECT description, exten, 'none', 'none', 'none' FROM meetme ) res"
 	sqlVals := []interface{}{}
 
 	swapField := func(v string) string {
@@ -89,6 +89,12 @@ func handleSearchDSEint(w ldap.ResponseWriter, m *ldap.Message) {
 			return "name"
 		case "telephoneNumber":
 			return "extension"
+		case "mobile":
+			return "cell"
+		case "homePhone":
+			return "home"
+		case "company":
+			return "company"
 		default:
 			log.Printf("Invalid Field Name (%s), returned name", v)
 			return "name"
@@ -204,6 +210,9 @@ func handleSearchDSEint(w ldap.ResponseWriter, m *ldap.Message) {
 		e := ldap.NewSearchResultEntry(entry.Name)
 		e.AddAttribute("displayName", message.AttributeValue(entry.Name))
 		e.AddAttribute("telephoneNumber", message.AttributeValue(entry.Extension))
+		e.AddAttribute("mobile", message.AttributeValue(entry.Cell))
+		e.AddAttribute("homePhone", message.AttributeValue(entry.Home))
+		e.AddAttribute("company", message.AttributeValue(entry.Company))
 		w.Write(e)
 	}
 }
@@ -345,6 +354,9 @@ func handleSearchDSEext(w ldap.ResponseWriter, m *ldap.Message) {
 		e := ldap.NewSearchResultEntry(entry.Name)
 		e.AddAttribute("displayName", message.AttributeValue(entry.Name))
 		e.AddAttribute("telephoneNumber", message.AttributeValue(entry.Extension))
+		e.AddAttribute("mobile", message.AttributeValue(entry.Cell))
+		e.AddAttribute("homePhone", message.AttributeValue(entry.Home))
+		e.AddAttribute("company", message.AttributeValue(entry.Company))
 		w.Write(e)
 	}
 }
