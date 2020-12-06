@@ -8,6 +8,7 @@ Group=asterisk
 WorkingDirectory=/opt/freepbx-ldap
 ExecStart=/bin/bash -c '/opt/freepbx-ldap/freepbx-ldap'
 Restart=on-failure
+TimeoutStopSec=3
 
 [Install]
 WantedBy=multi-user.target
