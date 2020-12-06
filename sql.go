@@ -13,8 +13,8 @@ var (
 	dbConn *sql.DB
 
 	sqlserver string = "127.0.0.1:3306"
-	sqluser   string = "root"
-	sqlpass   string = ""
+	sqluser   string = "ldap"
+	sqlpass   string = "7fmcki6f"
 	sqldb     string = "asterisk"
 )
 
@@ -33,6 +33,9 @@ func SQLConnect() (err error) {
 type PhonebookEntry struct {
 	Name      string
 	Extension string
+	Cell string
+	Home string
+	Company string
 }
 
 func SQLSearch(sqlQuery string, sqlVals []interface{}) ([]*PhonebookEntry, error) {
@@ -51,14 +54,20 @@ func SQLSearch(sqlQuery string, sqlVals []interface{}) ([]*PhonebookEntry, error
 		var (
 			name      string
 			extension string
+			cell      string
+			home      string
+			company   string
 		)
-		err := rows.Scan(&name, &extension)
+		err := rows.Scan(&name, &extension, &cell, &home, &company)
 		if err != nil {
 			return nil, fmt.Errorf("Database Error: %s", err)
 		}
 		result = append(result, &PhonebookEntry{
 			Name:      name,
 			Extension: extension,
+			Cell: cell,
+			Home: home,
+			Company: company,
 		})
 	}
 	err = rows.Err()
