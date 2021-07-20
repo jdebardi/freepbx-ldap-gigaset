@@ -80,7 +80,7 @@ func handleSearchDSEint(w ldap.ResponseWriter, m *ldap.Message) {
 	log.Printf("Request TimeLimit=%d", r.TimeLimit().Int())
 	log.Printf("Request SizeLimit=%d", r.SizeLimit().Int())
 
-	sql := "SELECT * FROM( SELECT displayname name, CASE WHEN default_extension IS NULL AND home IS NULL THEN cell WHEN default_extension IS NULL THEN home ELSE default_extension END extension, CASE WHEN cell IS NULL THEN 'none' ELSE cell END cell, CASE WHEN home IS NULL THEN 'none' ELSE home END home, CASE WHEN company IS NULL THEN 'none' ELSE company END company FROM userman_users UNION SELECT description, grpnum, 'none', 'none', 'none' FROM ringgroups UNION SELECT description, exten, 'none', 'none', 'none' FROM meetme ) res"
+	sql := "SELECT * FROM( SELECT displayname name, CASE WHEN (default_extension IS NULL OR default_extension = 'none') AND (home IS NULL OR home = '') THEN cell WHEN default_extension = 'none' THEN home ELSE default_extension END extension, CASE WHEN cell IS NULL OR cell = '' THEN 'none' ELSE cell END cell, CASE WHEN home IS NULL OR home = '' THEN 'none' ELSE home END home, CASE WHEN company IS NULL OR company = '' THEN 'none' ELSE company END company FROM userman_users UNION SELECT description, grpnum, 'none', 'none', 'none' FROM ringgroups UNION SELECT description, exten, 'none', 'none', 'none' FROM meetme ) res"
 	sqlVals := []interface{}{}
 
 	swapField := func(v string) string {
