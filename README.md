@@ -25,8 +25,8 @@ To build, you will need to install the Go runtime
 
 ```
 yum update
-wget https://dl.google.com/go/go1.14.1.linux-amd64.tar.gz
-tar -xzf go1.14.1.linux-amd64.tar.gz
+wget https://dl.google.com/go/go1.21.4.linux-amd64.tar.gz
+tar -xzf go1.21.4.linux-amd64.tar.gz
 mv go /usr/local
 ```
 
@@ -41,15 +41,29 @@ Clone the repo
 git clone https://github.com/kaeferfreund/freepbx-ldap.git
 ```
 
+Creat go.mod file in freepbx-ldap folder with these contents
+```
+module .git/config
+
+go 1.21.4
+
+require (
+	github.com/go-sql-driver/mysql v1.7.1
+	github.com/lor00x/goldap v0.0.0-20180618054307-a546dffdd1a3
+	github.com/vjeantet/ldapserver v1.0.1
+)
+```
+
 Clone dependencies
 ```
-go get github.com/vjeantet/ldapserver
-go get github.com/vjeantet/goldap
+go get .git/config
 ```
 
 build
 ```
+go install
 go build
+mv config freepbx-ldap
 ```
 
 start with debug console output
